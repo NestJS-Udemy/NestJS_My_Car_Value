@@ -21,13 +21,18 @@ import { AuthService } from './auth.service';
 @Serialize(UserDto)
 export class UsersController {
   constructor(
-    private userServcie: UsersService,
+    private userService: UsersService,
     private authService: AuthService,
   ) {}
 
   @Get('/whoami')
   whoAmI(@Session() session: any) {
-    return this.userServcie.findOne(session.userId);
+    return this.userService.findOne(session.userId);
+  }
+
+  @Post('/signout')
+  signOut(@Session() session: any) {
+    session.userId = null;
   }
 
   @Post('/signup')
@@ -46,23 +51,23 @@ export class UsersController {
 
   @Get('/:id')
   async findUser(@Param('id') id: string) {
-    const user = await this.userServcie.findOne(parseInt(id));
+    const user = await this.userService.findOne(parseInt(id));
     if (!user) throw new NotFoundException('user not found');
     return user;
   }
 
   @Get()
   findAllUser(@Query('email') email: string) {
-    return this.userServcie.find(email);
+    return this.userService.find(email);
   }
 
   @Delete('/:id')
   removeUser(@Param('id') id: string) {
-    return this.userServcie.remove(parseInt(id));
+    return this.userService.remove(parseInt(id));
   }
 
   @Patch('/:id')
   updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return this.userServcie.update(parseInt(id), body);
+    return this.userService.update(parseInt(id), body);
   }
 }
