@@ -9,6 +9,7 @@ import {
   Query,
   NotFoundException,
   Session,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
@@ -18,6 +19,7 @@ import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './user.entity';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -33,6 +35,7 @@ export class UsersController {
   // }
 
   @Get('whoami')
+  @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {
     return user;
   }
@@ -51,7 +54,9 @@ export class UsersController {
 
   @Post('/signin')
   async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    console.log('session1 ', session);
     const user = await this.authService.signin(body.email, body.password);
+    console.log('session2', session);
     session.userId = user.id;
     return user;
   }
