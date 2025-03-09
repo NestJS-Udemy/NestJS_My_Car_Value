@@ -30,12 +30,8 @@ export class AuthService {
 
   async authSignup(email: string, password: string) {
     // 이메일 중복 체크
-    try {
-      await this.usersService.find(email);
-      throw new BadRequestException('Email already in use');
-    } catch (error) {
-      // NotFoundException이면 정상적으로 회원가입 진행
-    }
+    const [user] = await this.usersService.find(email);
+    if (user) throw new BadRequestException('Email already in use');
 
     // 비밀번호 해싱
     const hashedPassword = await this.hashPassword(password);
