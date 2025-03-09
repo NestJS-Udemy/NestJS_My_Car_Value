@@ -8,11 +8,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
-interface ClassConstructor {
-  new (...args: any[]): {};
+interface ClassConstructor<T> {
+  new (...args: any[]): T;
 }
 
-export function Serialize(dto: ClassConstructor) {
+export function Serialize<T>(dto: ClassConstructor<T>) {
   return UseInterceptors(new SerializeInterceptor(dto));
 }
 
